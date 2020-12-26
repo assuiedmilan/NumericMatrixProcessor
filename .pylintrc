@@ -131,7 +131,9 @@ disable=print-statement,
         invalid-name,  # snake_case will be enforced in a future version
         useless-object-inheritance,
         eval-used,
-        duplicate-code
+        duplicate-code,
+        missing-module-docstring,
+        non-ascii-name
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -233,12 +235,7 @@ function-naming-style=snake_case
 #function-rgx=
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=i,
-           j,
-           k,
-           ex,
-           Run,
-           _
+#good-names=
 
 # Include a hint for the correct naming format with invalid-name
 include-naming-hint=no
@@ -384,8 +381,6 @@ generated-members=RtlabApi.*,
                   OpalApiPy.*,
                   pythoncom.*,
                   pywintypes.*,
-                  config,
-                  session,
 
 # Tells whether missing members accessed in mixin class should be ignored. A
 # mixin class is detected if its name ends with "mixin" (case insensitive).
@@ -408,8 +403,6 @@ ignored-classes=optparse.Values,
                 optoolbox.optest.junitxml.ReporterCollector,
                 optoolbox.optest.loader.TestLoader,
                 optoolbox.optest.resultfolder.ResultFolder,
-                nose2.plugins.junitxml.JUnitXmlReporter,
-                nose2.events.Plugin,
 
 # List of module names for which member attributes should not be checked
 # (useful for modules/projects where namespaces are manipulated during runtime
