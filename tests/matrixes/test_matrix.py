@@ -1,9 +1,16 @@
 import pytest
 
+from matrixes.conftest import matrixes
 from matrixes.conftest import matrixes_columns
 from matrixes.conftest import matrixes_lines
 from matrixes.conftest import matrixes_shapes
 from numeric_matrix_processor.matrix import Matrix
+
+@matrixes
+def test_format(value):
+    """Test that returned matrix value is always a list"""
+    matrix = Matrix(value)
+    assert isinstance(matrix.value, list)
 
 @matrixes_shapes
 def test_lines_count(value, shape):
