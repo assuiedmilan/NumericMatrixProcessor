@@ -7,7 +7,7 @@ from numeric_matrix_processor.matrix import Matrix
 SINGLE_VALUE_MATRIX = [1, [1], [[1]]]
 SINGLE_VALUE_MATRIX_SHAPE = [(1, 1)]
 
-LINE_MATRIX = [[3.43, 5.643, 3234, -2334.4324]]
+LINE_MATRIX = [[3.43, 5.643, 3234, -2334.4324], [[3.43, 5.643, 3234, -2334.4324]], ]
 LINE_MATRIX_SHAPE = [(1, 4)]
 
 COLUMN_MATRIX = [[[1], [-3], [4.543], [0], [323.532], [-34214.442]]]
