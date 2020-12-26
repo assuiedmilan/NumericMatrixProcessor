@@ -20,12 +20,12 @@ class Matrix:
         self.__validate()
 
 
-    def get_lines(self) -> int:
+    def get_lines_count(self) -> int:
         """Returns the number of lines"""
 
         return len(self.value)
 
-    def get_columns(self) -> int:
+    def get_columns_count(self) -> int:
         """Returns the number of columns"""
 
         return len(self.value[0])
