@@ -29,20 +29,18 @@ matrixes_parameters = pytest.mark.parametrize("value, shape",
 
 @matrixes_parameters
 def test_lines_count(value, shape):
+    """Test lines count"""
     matrix = Matrix(value)
     assert shape[0] == matrix.get_lines()
 
 @matrixes_parameters
-def test_lines_count(value, shape):
-    matrix = Matrix(value)
-    assert shape[1] == matrix.get_columns()
-
-@matrixes_parameters
-def test_lines_values(value, shape):
+def test_colums_count(value, shape):
+    """Test lines count"""
     matrix = Matrix(value)
     assert shape[1] == matrix.get_columns()
 
 @pytest.mark.parametrize("value", ["1", ["1"], [[1, 2], [1]], [[1, 2], [1, "2"]], ])
 def test_invalid_entries(value):
+    """Test invalid entries"""
     with pytest.raises(ValueError):
         Matrix(value)
