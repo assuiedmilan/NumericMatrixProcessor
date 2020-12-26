@@ -22,7 +22,7 @@ def test_lines_count(value, shape):
 def test_lines(value, lines):
     """Test that lines are correctly represented"""
     matrix = Matrix(value)
-    assert (lines == matrix.get_lines()).all()
+    assert lines == list(matrix.get_lines())
 
 @matrixes_shapes
 def test_colums_count(value, shape):
@@ -34,7 +34,7 @@ def test_colums_count(value, shape):
 def test_columns(value, columns):
     """Test that columns are correctly represented"""
     matrix = Matrix(value)
-    assert (columns == matrix.get_columns()).all()
+    assert columns == list(matrix.get_columns())
 
 @pytest.mark.parametrize("value", ["1", ["1"], [[1, 2], [1]], [[1, 2], [1, "2"]], ])
 def test_invalid_entries(value):
