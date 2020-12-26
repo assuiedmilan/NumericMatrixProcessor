@@ -27,6 +27,8 @@ GENERIC_MATRIX_SHAPE = [(2, 4)]
 GENERIC_MATRIX_LINES = [[1, 2, 3, 4], [5, 6 ,7, 8]]
 GENERIC_MATRIX_COLUMNS = [[1, 5], [2, 6], [3, 7], [4, 8]]
 
+matrixes = pytest.mark.parametrize("value", SINGLE_VALUE_MATRIX + LINE_MATRIX + COLUMN_MATRIX + SQUARE_MATRIX + GENERIC_MATRIX)
+
 matrixes_shapes = pytest.mark.parametrize("value, shape",
                                           list(product(SINGLE_VALUE_MATRIX, SINGLE_VALUE_MATRIX_SHAPE))
                                           + list(product(LINE_MATRIX, LINE_MATRIX_SHAPE))
