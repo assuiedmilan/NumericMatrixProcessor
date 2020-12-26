@@ -1,5 +1,7 @@
 import pytest
 
+from matrixes.conftest import matrixes_columns
+from matrixes.conftest import matrixes_lines
 from matrixes.conftest import matrixes_shapes
 from numeric_matrix_processor.matrix import Matrix
 
@@ -9,11 +11,23 @@ def test_lines_count(value, shape):
     matrix = Matrix(value)
     assert shape[0] == matrix.get_lines_count()
 
+@matrixes_lines
+def test_lines(value, lines):
+    """Test that lines are correctly represented"""
+    matrix = Matrix(value)
+    assert (lines == matrix.get_lines()).all()
+
 @matrixes_shapes
 def test_colums_count(value, shape):
     """Test lines count"""
     matrix = Matrix(value)
     assert shape[1] == matrix.get_columns_count()
+
+@matrixes_columns
+def test_columns(value, columns):
+    """Test that columns are correctly represented"""
+    matrix = Matrix(value)
+    assert (columns == matrix.get_columns()).all()
 
 @pytest.mark.parametrize("value", ["1", ["1"], [[1, 2], [1]], [[1, 2], [1, "2"]], ])
 def test_invalid_entries(value):
