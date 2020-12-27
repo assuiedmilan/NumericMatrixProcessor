@@ -12,7 +12,8 @@ from numeric_matrix_processor.matrix import Matrix
 ])
 def test_addition(first, second, result):
     """Test matrix additions"""
-    assert result ==  (first + second)
+    assert result == (first + second)
+
 
 # noinspection PyTypeChecker
 @pytest.mark.parametrize("first, second, result", [
@@ -23,4 +24,4 @@ def test_addition(first, second, result):
 ])
 def test_substraction(first, second, result):
     """Test matrix substraction"""
-    assert result ==  (first - second)
+    assert result == (first - second)
