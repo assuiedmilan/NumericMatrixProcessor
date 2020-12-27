@@ -52,6 +52,12 @@ def test_format(value):
     assert isinstance(matrix.value, list)
 
 @matrixes_shapes
+def test_shape(value, shape):
+    """Test shape property"""
+    matrix = Matrix(value)
+    assert shape == matrix.shape
+
+@matrixes_shapes
 def test_lines_count(value, shape):
     """Test lines count"""
     matrix = Matrix(value)

@@ -1,3 +1,5 @@
+from operator import add
+from operator import sub
 from typing import List
 
 
@@ -24,32 +26,58 @@ class Matrix:
         """Return the matrix value"""
         return self.__value
 
+    @property
+    def shape(self):
+        """Shape of the matrix"""
+        return self.get_lines_count(), self.get_columns_count()
+
+    def __repr__(self):
+        representation = ""
+
+        for line in self.value:
+            representation += "".join(map(lambda d: " {} ".format(str(d)), line)) + "\n"
+
+        return representation
+
+    def __eq__(self, other):
+        return list(self.get_lines()) == list(other.get_lines())
+
+    def __add__(self, other):
+        return self.__addition_law__(other, add)
+
+    def __sub__(self, other):
+        return self.__addition_law__(other, sub)
+
+    def __addition_law__(self, other, operation):
+        if self.shape != other.shape:
+            raise ValueError("Matrixes to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
+
+        return Matrix(list(map(lambda x: list(map(operation, x[0], x[1])), zip(self.get_lines(), other.get_lines()))))
+
     def get_lines_count(self) -> int:
         """Returns the number of lines"""
-        return len(self.__value)
+        return len(self.value)
 
     def get_columns_count(self) -> int:
         """Returns the number of columns"""
-        return len(self.__value[0])
+        return len(self.value[0])
 
     def get_lines(self):
         """Returns lines as an iterator"""
         for i in range(self.get_lines_count()):
-            yield self.__value[i]
+            yield self.value[i]
 
     def get_columns(self):
         """Returns columns as an interator"""
         for i in range(self.get_columns_count()):
-            yield [x[i] for x in self.__value]
-
-
+            yield [x[i] for x in self.value]
 
     def __validate(self):
 
         def is_line_valid(line_under_test):
             return all(isinstance(x, (int, float)) for x in line_under_test)
 
-        value = self.__value
+        value = self.value
 
         if not isinstance(value, list):
             if not is_line_valid([value]):
@@ -78,3 +106,11 @@ class Matrix:
 
                     if not is_line_valid(line):
                         raise ValueError("Lines line is not a list of numerical value, verify all values in {}".format(type(line)))
+
+if __name__ == "__main__":
+    m = Matrix([[1, 2], [3, 4], [7.15, 4.12]])
+    n = Matrix([[3, 4], [1, 2], [3.23, 4.43]])
+    s = m + n
+    x = s - n
+    print(s)
+    print(x)
