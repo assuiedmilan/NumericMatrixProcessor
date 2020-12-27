@@ -14,7 +14,7 @@ def make_deps(filename):
 
 
 def main():
-
+    """Main setup function"""
     setuptools.setup(
         name='JetBrain Academy - Numeric Matrix Processor',
         url = "https://hyperskill.org/projects/96",

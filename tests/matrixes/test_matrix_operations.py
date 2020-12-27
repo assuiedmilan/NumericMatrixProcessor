@@ -11,6 +11,7 @@ from numeric_matrix_processor.matrix import Matrix
     pytest.param(Matrix(1), Matrix([1, 2]), Matrix(3), marks=pytest.mark.xfail(raises=ValueError, strict=True))
 ])
 def test_addition(first, second, result):
+    """Test matrix additions"""
     assert result ==  (first + second)
 
 # noinspection PyTypeChecker
@@ -21,4 +22,5 @@ def test_addition(first, second, result):
     pytest.param(Matrix(1), Matrix([1, 2]), Matrix(3), marks=pytest.mark.xfail(raises=ValueError, strict=True))
 ])
 def test_substraction(first, second, result):
+    """Test matrix substraction"""
     assert result ==  (first - second)

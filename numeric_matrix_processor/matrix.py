@@ -106,11 +106,3 @@ class Matrix:
 
                     if not is_line_valid(line):
                         raise ValueError("Lines line is not a list of numerical value, verify all values in {}".format(type(line)))
-
-if __name__ == "__main__":
-    m = Matrix([[1, 2], [3, 4], [7.15, 4.12]])
-    n = Matrix([[3, 4], [1, 2], [3.23, 4.43]])
-    s = m + n
-    x = s - n
-    print(s)
-    print(x)
