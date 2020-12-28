@@ -32,12 +32,7 @@ class Matrix:
         return self.get_lines_count(), self.get_columns_count()
 
     def __repr__(self):
-        representation = ""
-
-        for line in self.value:
-            representation += "".join(map(lambda d: " {} ".format(str(d)), line)) + "\n"
-
-        return representation
+        return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
 
     def __eq__(self, other):
         return list(self.get_lines()) == list(other.get_lines())
