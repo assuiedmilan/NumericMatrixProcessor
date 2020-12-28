@@ -32,12 +32,7 @@ class Matrix:
         return self.get_lines_count(), self.get_columns_count()
 
     def __repr__(self):
-        representation = ""
-
-        for line in self.value:
-            representation += "".join(map(lambda d: " {} ".format(str(d)), line)) + "\n"
-
-        return representation
+        return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
 
     def __eq__(self, other):
         return list(self.get_lines()) == list(other.get_lines())
@@ -50,7 +45,7 @@ class Matrix:
 
     def __addition_law__(self, other, operation):
         if self.shape != other.shape:
-            raise ValueError("Matrixes to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
+            raise ValueError("Matrices to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
 
         return Matrix(list(map(lambda x: list(map(operation, x[0], x[1])), zip(self.get_lines(), other.get_lines()))))
 
@@ -68,7 +63,7 @@ class Matrix:
             yield self.value[i]
 
     def get_columns(self):
-        """Returns columns as an interator"""
+        """Returns columns as an iterator"""
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
 
