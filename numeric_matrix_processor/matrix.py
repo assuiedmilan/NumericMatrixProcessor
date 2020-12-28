@@ -18,6 +18,7 @@ class Matrix:
         Attributes:
             value (List[list]): A list of list of ints/floats defining the matrix
     """
+
     def __init__(self, value: List[list]):
         self.__value = value
         self.__validate()
@@ -92,15 +93,12 @@ class Matrix:
         if self.get_lines_count() != other.get_columns_count():
             raise ValueError("Matrices to add must have compatibles sizes.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
 
-        new_matrix = Matrix([[0] * self.get_lines_count() for x in range(other.get_columns_count()) ])
+        values = [
+            [compute_single_value(line, column) for column in other.get_columns()]
+            for line in self.get_lines()
+        ]
 
-        for i in range(self.get_lines_count()):
-            for j in range(other.get_columns_count()):
-                new_matrix[(i, j)] = compute_single_value(self.value[i], [x[j] for x in other.value])
-
-        return new_matrix
-
-
+        return Matrix(values)
 
     def __addition_law(self, other, operation):
         if self.shape != other.shape:
