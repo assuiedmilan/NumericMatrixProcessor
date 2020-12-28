@@ -38,16 +38,19 @@ class Matrix:
         return list(self.get_lines()) == list(other.get_lines())
 
     def __add__(self, other):
-        return self.__addition_law__(other, add)
+        return self.__addition_law(other, add)
 
     def __sub__(self, other):
-        return self.__addition_law__(other, sub)
+        return self.__addition_law(other, sub)
 
-    def __addition_law__(self, other, operation):
-        if self.shape != other.shape:
-            raise ValueError("Matrices to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return self.__multiply_by_number(other)
 
-        return Matrix(list(map(lambda x: list(map(operation, x[0], x[1])), zip(self.get_lines(), other.get_lines()))))
+        if isinstance(other, Matrix):
+            raise NotImplementedError
+
+        raise ValueError("Multiplication is allowed only by scalar or Matrices")
 
     def get_lines_count(self) -> int:
         """Returns the number of lines"""
@@ -66,6 +69,17 @@ class Matrix:
         """Returns columns as an iterator"""
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
+
+    def __multiply_by_number(self, number):
+        """Apply scalar multiplication to the matrix"""
+        new_values = [[value * number for value in line] for line in self.get_lines()]
+        return Matrix(new_values)
+
+    def __addition_law(self, other, operation):
+        if self.shape != other.shape:
+            raise ValueError("Matrices to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
+
+        return Matrix(list(map(lambda x: list(map(operation, x[0], x[1])), zip(self.get_lines(), other.get_lines()))))
 
     def __validate(self):
 
