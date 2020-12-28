@@ -1,4 +1,5 @@
 from operator import add
+from operator import mul
 from operator import sub
 from typing import List
 
@@ -31,6 +32,14 @@ class Matrix:
         """Shape of the matrix"""
         return self.get_lines_count(), self.get_columns_count()
 
+    def __getitem__(self, item):
+        """Redefine [] so it can receive a tuple in a 'Matlab' fashion"""
+        return self.value[item[0]][item[1]]
+
+    def __setitem__(self, key, value):
+        """Redefine [] so it can assign a value via a tuple in a 'Matlab' fashion"""
+        self.value[key[0]][key[1]] = value
+
     def __repr__(self):
         return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
 
@@ -48,7 +57,7 @@ class Matrix:
             return self.__multiply_by_number(other)
 
         if isinstance(other, Matrix):
-            raise NotImplementedError
+            return self.__multiply_by_matrix(other)
 
         raise ValueError("Multiplication is allowed only by scalar or Matrices")
 
@@ -74,6 +83,24 @@ class Matrix:
         """Apply scalar multiplication to the matrix"""
         new_values = [[value * number for value in line] for line in self.get_lines()]
         return Matrix(new_values)
+
+    def __multiply_by_matrix(self, other):
+
+        def compute_single_value(processed_line, processed_column):
+            return sum(map(lambda x: mul(x[0], x[1]), zip(processed_line, processed_column)))
+
+        if self.get_lines_count() != other.get_columns_count():
+            raise ValueError("Matrices to add must have compatibles sizes.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
+
+        new_matrix = Matrix([[0] * self.get_lines_count() for x in range(other.get_columns_count()) ])
+
+        for i in range(self.get_lines_count()):
+            for j in range(other.get_columns_count()):
+                new_matrix[(i, j)] = compute_single_value(self.value[i], [x[j] for x in other.value])
+
+        return new_matrix
+
+
 
     def __addition_law(self, other, operation):
         if self.shape != other.shape:
