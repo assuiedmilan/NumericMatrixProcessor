@@ -1,8 +1,7 @@
 type: code
-files:
-- name: main.py
-  visible: true
-  learner_created: false
 feedback_link: https://hyperskill.org/learn/step/9476#comment
 status: Unchecked
+feedback:
+  message: Failed to post solution to JetBrains Academy
+  time: Mon, 28 Dec 2020 02:31:59 UTC
 record: -1

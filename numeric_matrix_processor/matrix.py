@@ -50,7 +50,7 @@ class Matrix:
 
     def __addition_law__(self, other, operation):
         if self.shape != other.shape:
-            raise ValueError("Matrixes to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
+            raise ValueError("Matrices to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
 
         return Matrix(list(map(lambda x: list(map(operation, x[0], x[1])), zip(self.get_lines(), other.get_lines()))))
 
@@ -68,7 +68,7 @@ class Matrix:
             yield self.value[i]
 
     def get_columns(self):
-        """Returns columns as an interator"""
+        """Returns columns as an iterator"""
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
 
