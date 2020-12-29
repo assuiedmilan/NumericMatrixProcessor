@@ -28,7 +28,18 @@ def test_subtraction(first, second, result):
 
 
 @pytest.mark.parametrize("first, second, result", [
-    (Matrix([[1, 2, 3], [4, 5, 6]]), Matrix([[7, 8], [9, 10], [11, 12]]), Matrix([[58, 64], [139, 154]]))
+    (Matrix([[1, 2, 3], [4, 5, 6]]), Matrix([[7, 8], [9, 10], [11, 12]]), Matrix([[58, 64], [139, 154]])),
+    (
+            Matrix([[1, 4, 5, 6, 6], [7, 8, 9, 0, 0], [4, 1, 2, 2, 2]]),
+            Matrix([[4, 5], [6, 1], [6, 0], [0, 9], [7, 7]]),
+            Matrix([[100, 105], [130, 43], [48, 53]])
+    ),
+    pytest.param(
+        Matrix([[1, 4, 5, 6], [7, 8, 9, 0], [4, 1, 2, 2]]),
+        Matrix([[4, 5], [6, 1], [6, 0], [0, 9], [7, 7]]),
+        Matrix([[100, 105], [130, 43], [48, 53]]),
+        marks=pytest.mark.xfail(raises=ValueError, strict=True)
+    )
 ])
 def test_multiplication(first, second, result):
     """Test matrix multiplication"""

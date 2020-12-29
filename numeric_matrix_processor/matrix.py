@@ -90,7 +90,7 @@ class Matrix:
         def compute_single_value(processed_line, processed_column):
             return sum(map(lambda x: mul(x[0], x[1]), zip(processed_line, processed_column)))
 
-        if self.get_lines_count() != other.get_columns_count():
+        if self.get_columns_count() != other.get_lines_count():
             raise ValueError("Matrices to add must have compatibles sizes.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
 
         values = [
