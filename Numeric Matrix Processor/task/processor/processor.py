@@ -11,7 +11,7 @@ __EXIT = 0
 __MAIN_DIAG = 1
 __SIDE_DIAG = 2
 __VERT_LINE = 3
-__HORZ_LINE = 4
+__HOR_LINE = 4
 
 
 def ask_for_task_choice():
@@ -68,16 +68,18 @@ def matrices_multiplications():
 
 
 def matrices_transpose():
+    """Perform the matrices transpositions"""
     message = "{}. Main diagonal\n{}. Side Diagonal\n{}. Vertical line\n{}. Horizontal line\nYour choice: ".format(
         __MAIN_DIAG,
         __SIDE_DIAG,
         __VERT_LINE,
-        __HORZ_LINE
+        __HOR_LINE
     )
 
     transposition_type = int(input(message))
 
     m_matrix = Matrix(ask_for_matrix("Enter size of matrix: ", "Enter matrix:\n"))
+    t_matrix = None
 
     if transposition_type == __MAIN_DIAG:
         t_matrix = m_matrix.transpose()
@@ -85,10 +87,10 @@ def matrices_transpose():
         t_matrix = m_matrix.side_transpose()
     elif transposition_type == __VERT_LINE:
         t_matrix = m_matrix.vertical_transpose()
-    elif transposition_type == __HORZ_LINE:
+    elif transposition_type == __HOR_LINE:
         t_matrix = m_matrix.horizontal_transpose()
     else:
-        raise ValueError("Invalid choice")
+        print("Invalid choice")
 
     print("The result is:\n{}".format(t_matrix))
 
