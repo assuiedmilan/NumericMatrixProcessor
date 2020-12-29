@@ -5,7 +5,7 @@ from numeric_matrix_processor.matrix import Matrix
 __ADD__MATRICES = 1
 __MULTIPLY_BY_CONSTANT = 2
 __MULTIPLE_BY_MATRIX = 3
-__EXIT = 4
+__EXIT = 0
 
 
 def ask_for_task_choice():
@@ -21,6 +21,7 @@ def ask_for_task_choice():
 
 
 def process_choice(value):
+    """Process user input"""
     if value == __ADD__MATRICES:
         addition()
     elif value == __MULTIPLY_BY_CONSTANT:
@@ -34,6 +35,7 @@ def process_choice(value):
 
 
 def addition():
+    """Perform the matrix addition task"""
     m_matrix = Matrix(ask_for_matrix("Enter size of first matrix: ", "Enter first matrix:\n"))
     n_matrix = Matrix(ask_for_matrix("Enter size of second matrix: ", "Enter second matrix:\n"))
 
@@ -41,6 +43,7 @@ def addition():
 
 
 def scalar_multiplication():
+    """Perform the scalar multiplication task"""
     m_matrix = Matrix(ask_for_matrix("Enter size of matrix: ", "Enter matrix:\n"))
     n_matrix = float(input("Enter constant: "))
 
@@ -48,6 +51,7 @@ def scalar_multiplication():
 
 
 def matrices_multiplications():
+    """Perform the matrices multiplication task"""
     m_matrix = Matrix(ask_for_matrix("Enter size of first matrix: ", "Enter first matrix:\n"))
     n_matrix = Matrix(ask_for_matrix("Enter size of second matrix: ", "Enter second matrix:\n"))
 
