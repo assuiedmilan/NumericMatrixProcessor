@@ -282,5 +282,55 @@ files:
         CalcTest("processor.processor").run_tests()
   learner_created: false
 feedback_link: https://hyperskill.org/projects/96/stages/530/implement#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Exception in test #1
+
+    Probably your program run out of input (tried to read more than expected)
+
+    Traceback (most recent call last):
+      File "processor.py", line 68, in <module>
+        choice = ask_for_task_choice()
+      File "processor.py", line 18, in ask_for_task_choice
+        return int(input(message))
+    EOFError: EOF when reading a line
+
+    Please find below the output of your program during this failed test.
+    Note that the '>' character indicates the beginning of the input line.
+
+    ---
+
+    1. Add matrices
+    2. Multiply matrix by a constant
+    3. Multiply matrices
+    4. Exit
+    Your choice: > 1
+    Enter size of first matrix: > 3 3
+    Enter first matrix:
+    > 3 4 55
+    > 4 1 1
+    > 9 0 0
+    Enter size of second matrix: > 3 3
+    Enter second matrix:
+    > 4 9 77
+    > 13 22 44
+    > 56 57 78
+    The result is:
+    7.0 13.0 132.0
+    17.0 23.0 45.0
+    65.0 57.0 78.0
+
+    1. Add matrices
+    2. Multiply matrix by a constant
+    3. Multiply matrices
+    4. Exit
+    Your choice: > 0
+    Invalid choice
+    1. Add matrices
+    2. Multiply matrix by a constant
+    3. Multiply matrices
+    4. Exit
+    Your choice:
+  time: Tue, 29 Dec 2020 01:04:06 UTC
 record: -1
