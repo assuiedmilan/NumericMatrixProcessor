@@ -1,13 +1,11 @@
-buildpushd "%~dp0"
-
+pushd "%~dp0"
+call setup.bat
 cd..
 
 rmdir .eggs /q /s
 rmdir build /q /s
 rmdir dist /q /s
 
-call .venv\Scripts\activate.bat
-
-python setup.py bdist_wheel --universal
+call poetry build
 
 popd
