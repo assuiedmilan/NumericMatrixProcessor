@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "NumericMatrixProcessor"
+version = "0.1.0"
+description = "JetBrainAcademy Project - Doind a matrix calculator from scratch."
+authors = ["Milan Assuied"]
+url="https://hyperskill.org/projects/96"
+
+[tool.poetry.dependencies]
+python = "^3,7"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-lazy-fixture = "*"
+pytest-mock = "*"
+mock = "*"
+sphinx = "*"
+sphinx_rtd_theme = "*"
+pylint = "*"
