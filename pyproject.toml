@@ -1,12 +1,22 @@
+[build-system]
+requires = ["poetry_core>=1.1.4"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "NumericMatrixProcessor"
 version = "0.1.0"
 description = "JetBrainAcademy Project - Doind a matrix calculator from scratch."
 authors = ["Milan Assuied"]
-url="https://hyperskill.org/projects/96"
+readme = "README.md"
+repository = "https://github.com/assuiedmilan/NumericMatrixProcessor.git"
+homepage = "https://hyperskill.org/projects/96"
+
+packages = [
+    { include = "numeric_matrix_processor"}
+]
 
 [tool.poetry.dependencies]
-python = "^3,7"
+python = "3.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
