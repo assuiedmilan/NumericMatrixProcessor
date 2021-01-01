@@ -32,12 +32,3 @@ jobs:
     - name: Lint with pylint
       run: |
         poetry shell
-        pylint numeric_matrix_processor --rcfile=.pylintrc
-        pylint tests --rcfile=.pylintrc
-    - name: Test with pytest
-      run: |
-        poetry shell
-        pytest
-    - name: Build wheel
-      run: |
-        poetry build
