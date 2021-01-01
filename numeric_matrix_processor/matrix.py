@@ -62,6 +62,22 @@ class Matrix:
 
         raise ValueError("Multiplication is allowed only by scalar or Matrices")
 
+    def transpose(self):
+        """Return transposed matrix"""
+        return Matrix(list(self.get_columns()))
+
+    def side_transpose(self):
+        """Return transposed matrix over the side diagonal"""
+        return Matrix(list(reversed([list(reversed(column)) for column in self.get_columns()])))
+
+    def vertical_transpose(self):
+        """Return transposed matrix over the vertical axis"""
+        return Matrix([list(reversed(line)) for line in self.get_lines()])
+
+    def horizontal_transpose(self):
+        """Return transposed matrix over the horizontal axis"""
+        return Matrix(list(reversed(list(self.get_lines()))))
+
     def get_lines_count(self) -> int:
         """Returns the number of lines"""
         return len(self.value)

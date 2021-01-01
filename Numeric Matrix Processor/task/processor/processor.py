@@ -2,18 +2,25 @@ import sys
 
 from numeric_matrix_processor.matrix import Matrix
 
-__ADD__MATRICES = 1
+__ADD_MATRICES = 1
 __MULTIPLY_BY_CONSTANT = 2
 __MULTIPLE_BY_MATRIX = 3
+__TRANSPOSE_MATRIX = 4
 __EXIT = 0
+
+__MAIN_DIAG = 1
+__SIDE_DIAG = 2
+__VERT_LINE = 3
+__HOR_LINE = 4
 
 
 def ask_for_task_choice():
     """Print choice menu and register user answer"""
-    message = "{}. Add matrices\n{}. Multiply matrix by a constant\n{}. Multiply matrices\n{}. Exit\nYour choice: ".format(
-        __ADD__MATRICES,
+    message = "{}. Add matrices\n{}. Multiply matrix by a constant\n{}. Multiply matrices\n{}. Transpose matrix\n{}. Exit\nYour choice: ".format(
+        __ADD_MATRICES,
         __MULTIPLY_BY_CONSTANT,
         __MULTIPLE_BY_MATRIX,
+        __TRANSPOSE_MATRIX,
         __EXIT
     )
 
@@ -22,12 +29,14 @@ def ask_for_task_choice():
 
 def process_choice(value):
     """Process user input"""
-    if value == __ADD__MATRICES:
+    if value == __ADD_MATRICES:
         addition()
     elif value == __MULTIPLY_BY_CONSTANT:
         scalar_multiplication()
     elif value == __MULTIPLE_BY_MATRIX:
         matrices_multiplications()
+    elif value == __TRANSPOSE_MATRIX:
+        matrices_transpose()
     elif value == __EXIT:
         sys.exit()
     else:
@@ -56,6 +65,34 @@ def matrices_multiplications():
     n_matrix = Matrix(ask_for_matrix("Enter size of second matrix: ", "Enter second matrix:\n"))
 
     print("The result is:\n{}".format(m_matrix * n_matrix))
+
+
+def matrices_transpose():
+    """Perform the matrices transpositions"""
+    message = "{}. Main diagonal\n{}. Side Diagonal\n{}. Vertical line\n{}. Horizontal line\nYour choice: ".format(
+        __MAIN_DIAG,
+        __SIDE_DIAG,
+        __VERT_LINE,
+        __HOR_LINE
+    )
+
+    transposition_type = int(input(message))
+
+    m_matrix = Matrix(ask_for_matrix("Enter size of matrix: ", "Enter matrix:\n"))
+    t_matrix = None
+
+    if transposition_type == __MAIN_DIAG:
+        t_matrix = m_matrix.transpose()
+    elif transposition_type == __SIDE_DIAG:
+        t_matrix = m_matrix.side_transpose()
+    elif transposition_type == __VERT_LINE:
+        t_matrix = m_matrix.vertical_transpose()
+    elif transposition_type == __HOR_LINE:
+        t_matrix = m_matrix.horizontal_transpose()
+    else:
+        print("Invalid choice")
+
+    print("The result is:\n{}".format(t_matrix))
 
 
 def ask_for_matrix(initial_message, second_message):
