@@ -6,6 +6,7 @@ __ADD_MATRICES = 1
 __MULTIPLY_BY_CONSTANT = 2
 __MULTIPLE_BY_MATRIX = 3
 __TRANSPOSE_MATRIX = 4
+__DETERMINANT = 5
 __EXIT = 0
 
 __MAIN_DIAG = 1
@@ -16,11 +17,12 @@ __HOR_LINE = 4
 
 def ask_for_task_choice():
     """Print choice menu and register user answer"""
-    message = "{}. Add matrices\n{}. Multiply matrix by a constant\n{}. Multiply matrices\n{}. Transpose matrix\n{}. Exit\nYour choice: ".format(
+    message = "{}. Add matrices\n{}. Multiply matrix by a constant\n{}. Multiply matrices\n{}. Transpose matrix\n{}. Calculate a determinant\n{}. Exit\nYour choice: ".format(
         __ADD_MATRICES,
         __MULTIPLY_BY_CONSTANT,
         __MULTIPLE_BY_MATRIX,
         __TRANSPOSE_MATRIX,
+        __DETERMINANT,
         __EXIT
     )
 
@@ -37,6 +39,8 @@ def process_choice(value):
         matrices_multiplications()
     elif value == __TRANSPOSE_MATRIX:
         matrices_transpose()
+    elif value == __DETERMINANT:
+        matrices_determinant()
     elif value == __EXIT:
         sys.exit()
     else:
@@ -93,6 +97,12 @@ def matrices_transpose():
         print("Invalid choice")
 
     print("The result is:\n{}".format(t_matrix))
+
+
+def matrices_determinant():
+    """Perform the determinant computation task"""
+    m_matrix = Matrix(ask_for_matrix("Enter matrix size: ", "Enter matrix:\n"))
+    print("The result is:\n{}".format(m_matrix.determinant()))
 
 
 def ask_for_matrix(initial_message, second_message):
