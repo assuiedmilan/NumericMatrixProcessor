@@ -507,9 +507,9 @@ files:
     if __name__ == '__main__':
         CalcTest("processor.processor").run_tests()
   learner_created: false
-- name: processor/__init__.py
-  visible: true
-  learner_created: true
 feedback_link: https://hyperskill.org/projects/96/stages/532/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Sat, 02 Jan 2021 21:13:21 UTC
 record: -1

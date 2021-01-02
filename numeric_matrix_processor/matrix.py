@@ -24,7 +24,7 @@ class Matrix:
     __SINGLE_MATRIX = (1, 1)
     __TWO_TWO_MATRIX = (2, 2)
 
-    def __init__(self, value: Union[List[List[float]], int, float]):
+    def __init__(self, value: Union[List[List[float]], int, float]):  # pylint: disable=unsubscriptable-object
         self.__value = value
         self.__validate()
 
@@ -180,11 +180,11 @@ class Matrix:
 
         if self.__SINGLE_MATRIX == self.shape:
             return self[0, 0]
-        else:
-            return sum(
-                cofactor * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
-                for cofactor, squared_two_matrix in self.get_minors()
-            )
+
+        return sum(
+            cofactor * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
+            for cofactor, squared_two_matrix in self.get_minors()
+        )
 
     def get_lines_count(self) -> int:
         """Returns the number of lines
