@@ -3,10 +3,10 @@ from operator import mul
 from operator import sub
 from typing import Generator
 from typing import List
+from typing import Tuple
 from typing import Union
 
 
-# pylint: disable=unsubscriptable-object
 class Matrix:
     """Basic definition of a matrix
 
@@ -25,7 +25,7 @@ class Matrix:
     __SINGLE_MATRIX = (1, 1)
     __TWO_TWO_MATRIX = (2, 2)
 
-    def __init__(self, value: Union[List[List[float]], int, float]):
+    def __init__(self, value: Union[List[List[float]], int, float]):  # pylint: disable=unsubscriptable-object
         self.__value = value
         self.__validate()
 
@@ -40,20 +40,20 @@ class Matrix:
         return self.__value
 
     @property
-    def shape(self) -> tuple[int, int]:
+    def shape(self) -> Tuple[int, int]:
         """Returns the shape of the matrix
 
         Returns:
-            The shape of the matrix as a tuple[int, int]
+            The shape of the matrix as a Tuple[int, int]
         """
 
         return self.get_lines_count(), self.get_columns_count()
 
-    def __getitem__(self, item: tuple[int, int]) -> float:
+    def __getitem__(self, item: Tuple[int, int]) -> float:
         """Redefines [] so it can receive a tuple in a 'Matlab' fashion
 
         Args:
-            item (tuple[int, int]): the matrix indexes
+            item (Tuple[int, int]): the matrix indexes
 
         Returns:
             The value in the matrix at the specified index, as an int or a float
@@ -61,11 +61,11 @@ class Matrix:
 
         return self.value[item[0]][item[1]]
 
-    def __setitem__(self, key: tuple[int, int], value: float):
+    def __setitem__(self, key: Tuple[int, int], value: float):
         """Redefines [] so it can assign a value via a tuple in a 'Matlab' fashion
 
         Args:
-            key (tuple[int, int]): the matrix indexes
+            key (Tuple[int, int]): the matrix indexes
             value (int, float): the value to set
         """
 
@@ -225,7 +225,7 @@ class Matrix:
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
 
-    def get_minors(self) -> Generator[tuple[int, 'Matrix'], None, None]:
+    def get_minors(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
         """Returns a generator of all (cofactor, minors) of the matrix using the first row
 
         Returns:
@@ -245,7 +245,7 @@ class Matrix:
 
                 yield from map(lambda x: (x[0] * cofactor, x[1]), minors)
 
-    def get_minor_at(self, line_index: int, column_index: int) -> tuple[float, 'Matrix']:
+    def get_minor_at(self, line_index: int, column_index: int) -> Tuple[float, 'Matrix']:
         """Returns the cofactor and minor matrix at the specified index
 
         Args:
