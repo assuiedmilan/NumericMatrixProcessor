@@ -6,6 +6,7 @@ from typing import List
 from typing import Union
 
 
+# pylint: disable=unsubscriptable-object
 class Matrix:
     """Basic definition of a matrix
 
@@ -24,7 +25,7 @@ class Matrix:
     __SINGLE_MATRIX = (1, 1)
     __TWO_TWO_MATRIX = (2, 2)
 
-    def __init__(self, value: Union[List[List[float]], int, float]):  # pylint: disable=unsubscriptable-object
+    def __init__(self, value: Union[List[List[float]], int, float]):
         self.__value = value
         self.__validate()
 
