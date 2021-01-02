@@ -33,27 +33,27 @@ class Matrix:
         """Shape of the matrix"""
         return self.get_lines_count(), self.get_columns_count()
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: tuple[int, int]) -> (int, float):
         """Redefine [] so it can receive a tuple in a 'Matlab' fashion"""
         return self.value[item[0]][item[1]]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: tuple[int, int], value: (int, float)):
         """Redefine [] so it can assign a value via a tuple in a 'Matlab' fashion"""
         self.value[key[0]][key[1]] = value
 
     def __repr__(self):
         return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'Matrix'):
         return list(self.get_lines()) == list(other.get_lines())
 
-    def __add__(self, other):
+    def __add__(self, other: 'Matrix'):
         return self.__addition_law(other, add)
 
-    def __sub__(self, other):
+    def __sub__(self, other: 'Matrix'):
         return self.__addition_law(other, sub)
 
-    def __mul__(self, other):
+    def __mul__(self, other: (int, float, 'Matrix')):
         if isinstance(other, (int, float)):
             return self.__multiply_by_number(other)
 
@@ -78,6 +78,18 @@ class Matrix:
         """Return transposed matrix over the horizontal axis"""
         return Matrix(list(reversed(list(self.get_lines()))))
 
+    def determinant(self):
+        """Return the determinant value
+
+        Returns:
+            The determinant as a float
+
+        """
+        return sum(
+            cofactor * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
+            for cofactor, squared_two_matrix in self.get_minors()
+        )
+
     def get_lines_count(self) -> int:
         """Returns the number of lines"""
         return len(self.value)
@@ -95,6 +107,33 @@ class Matrix:
         """Returns columns as an iterator"""
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
+
+    def get_minors(self):
+
+        for i in range(self.get_columns_count()):
+            minor = self.get_minor_at(0, i)
+            if (2, 2) != minor[1].shape:
+                yield from map(lambda x: (x[0]*minor[0], x[1]), minor[1].get_minors())
+            else:
+                yield minor
+
+    def get_minor_at(self, line_index, column_index):
+        """Returns the cofactor and minor matrix at the specified index
+
+        Args:
+            line_index (int): line as a zero-based index
+            column_index (int): column as a zero-based index
+
+        Returns:
+            A tuple (int, Matrix) containing the cofactor and the sub-matrix associated to the received indexes
+        """
+
+        cofactor = (-1) ** (line_index + column_index) * self[line_index, column_index]
+
+        sub_matrix = [line for i, line in enumerate(self.get_lines()) if i is not line_index]
+        sub_matrix = [[column for j, column in enumerate(line) if j is not column_index] for line in sub_matrix]
+
+        return cofactor, Matrix(sub_matrix)
 
     def __multiply_by_number(self, number):
         """Apply scalar multiplication to the matrix"""
@@ -156,3 +195,11 @@ class Matrix:
 
                     if not is_line_valid(line):
                         raise ValueError("Lines line is not a list of numerical value, verify all values in {}".format(type(line)))
+
+
+test = Matrix([[1, 2, 3, 4, 5], [4, 5, 6, 4, 3], [0, 0, 0, 1, 5], [1, 3, 9, 8, 7], [5, 8, 4, 7, 11]])
+test2 = Matrix([[1, 7, 7], [6, 6, 4], [4, 2, 1]])
+mat = test.get_minors()
+det = test.determinant()
+print("\n\n".join(["Cofactor: {}\nMinor: \n{}\n".format(v[0], v[1]) for v in mat]))
+print(det)
