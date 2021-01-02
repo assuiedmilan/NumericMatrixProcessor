@@ -1,7 +1,9 @@
 from operator import add
 from operator import mul
 from operator import sub
+from typing import Generator
 from typing import List
+from typing import Union
 
 
 class Matrix:
@@ -13,47 +15,118 @@ class Matrix:
         An int/float that define a single value matrix
 
         Args:
-            value (List[list]): A list of list of ints/floats defining a matrix
+            value (List[List[float]]): A list of list of ints/floats defining a matrix
 
         Attributes:
-            value (List[list]): A list of list of ints/floats defining the matrix
+            value (List[List[float]]): A list of list of ints/floats defining the matrix
     """
 
-    def __init__(self, value: List[list]):
+    __SINGLE_MATRIX = (1, 1)
+    __TWO_TWO_MATRIX = (2, 2)
+
+    def __init__(self, value: Union[List[List[float]], int, float]):
         self.__value = value
         self.__validate()
 
     @property
-    def value(self):
-        """Return the matrix value"""
+    def value(self) -> List[list]:
+        """Returns the matrix values
+
+        Returns:
+            The matrix values as a List[list]
+        """
+
         return self.__value
 
     @property
-    def shape(self):
-        """Shape of the matrix"""
+    def shape(self) -> tuple[int, int]:
+        """Returns the shape of the matrix
+
+        Returns:
+            The shape of the matrix as a tuple[int, int]
+        """
+
         return self.get_lines_count(), self.get_columns_count()
 
-    def __getitem__(self, item: tuple[int, int]) -> (int, float):
-        """Redefine [] so it can receive a tuple in a 'Matlab' fashion"""
+    def __getitem__(self, item: tuple[int, int]) -> float:
+        """Redefines [] so it can receive a tuple in a 'Matlab' fashion
+
+        Args:
+            item (tuple[int, int]): the matrix indexes
+
+        Returns:
+            The value in the matrix at the specified index, as an int or a float
+        """
+
         return self.value[item[0]][item[1]]
 
-    def __setitem__(self, key: tuple[int, int], value: (int, float)):
-        """Redefine [] so it can assign a value via a tuple in a 'Matlab' fashion"""
+    def __setitem__(self, key: tuple[int, int], value: float):
+        """Redefines [] so it can assign a value via a tuple in a 'Matlab' fashion
+
+        Args:
+            key (tuple[int, int]): the matrix indexes
+            value (int, float): the value to set
+        """
+
         self.value[key[0]][key[1]] = value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Returns the string representation of the matrix
+
+        Returns:
+            A printable string
+        """
+
         return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
 
-    def __eq__(self, other: 'Matrix'):
+    def __eq__(self, other: 'Matrix') -> bool:
+        """Returns true if both matrices are equal.
+
+        Matrices are equal if they have the same shape and the same values
+
+        Args:
+            other (numeric_matrix_processor.matrix.Matrix): the matrix to compare with
+
+        Returns:
+            A boolean representing equality
+        """
+
         return list(self.get_lines()) == list(other.get_lines())
 
-    def __add__(self, other: 'Matrix'):
+    def __add__(self, other: 'Matrix') -> 'Matrix':
+        """Returns matrices addition result
+
+        Args:
+            other (numeric_matrix_processor.matrix.Matrix): the matrix to add
+
+        Returns:
+            A numeric_matrix_processor.matrix.Matrix
+        """
+
         return self.__addition_law(other, add)
 
-    def __sub__(self, other: 'Matrix'):
+    def __sub__(self, other: 'Matrix') -> 'Matrix':
+        """Returns matrices substraction result
+
+        Args:
+            other (numeric_matrix_processor.matrix.Matrix): the matrix to substract
+
+        Returns:
+            A numeric_matrix_processor.matrix.Matrix
+        """
+
         return self.__addition_law(other, sub)
 
-    def __mul__(self, other: (int, float, 'Matrix')):
+    def __mul__(self, other: (int, float, 'Matrix')) -> 'Matrix':
+        """Returns matrices addition result
+
+        Args:
+            other (numeric_matrix_processor.matrix.Matrix, int, float): the matrix to multiply with OR a scalar value
+
+        Returns:
+            A numeric_matrix_processor.matrix.Matrix
+        """
+
         if isinstance(other, (int, float)):
             return self.__multiply_by_number(other)
 
@@ -62,62 +135,116 @@ class Matrix:
 
         raise ValueError("Multiplication is allowed only by scalar or Matrices")
 
-    def transpose(self):
-        """Return transposed matrix"""
+    def transpose(self) -> 'Matrix':
+        """Return transposed matrix
+
+        Returns:
+            A numeric_matrix_processor.matrix.Matrix
+        """
+
         return Matrix(list(self.get_columns()))
 
-    def side_transpose(self):
-        """Return transposed matrix over the side diagonal"""
+    def side_transpose(self) -> 'Matrix':
+        """Return transposed matrix over the side diagonal
+
+        Returns:
+            A numeric_matrix_processor.matrix.Matrix
+        """
+
         return Matrix(list(reversed([list(reversed(column)) for column in self.get_columns()])))
 
-    def vertical_transpose(self):
-        """Return transposed matrix over the vertical axis"""
+    def vertical_transpose(self) -> 'Matrix':
+        """Return transposed matrix over the vertical axis
+
+        Returns:
+            A numeric_matrix_processor.matrix.Matrix
+        """
+
         return Matrix([list(reversed(line)) for line in self.get_lines()])
 
-    def horizontal_transpose(self):
-        """Return transposed matrix over the horizontal axis"""
+    def horizontal_transpose(self) -> 'Matrix':
+        """Return transposed matrix over the horizontal axis
+
+        Returns:
+            A numeric_matrix_processor.matrix.Matrix
+        """
+
         return Matrix(list(reversed(list(self.get_lines()))))
 
-    def determinant(self):
+    def determinant(self) -> float:
         """Return the determinant value
 
         Returns:
             The determinant as a float
-
         """
-        return sum(
-            cofactor * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
-            for cofactor, squared_two_matrix in self.get_minors()
-        )
+
+        if self.__SINGLE_MATRIX == self.shape:
+            return self[0, 0]
+        else:
+            return sum(
+                cofactor * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
+                for cofactor, squared_two_matrix in self.get_minors()
+            )
 
     def get_lines_count(self) -> int:
-        """Returns the number of lines"""
+        """Returns the number of lines
+
+        Returns:
+            The number of lines as an int
+        """
+
         return len(self.value)
 
     def get_columns_count(self) -> int:
-        """Returns the number of columns"""
+        """Returns the number of columns
+
+        Returns:
+            The number of columns as an int
+        """
+
         return len(self.value[0])
 
-    def get_lines(self):
-        """Returns lines as an iterator"""
+    def get_lines(self) -> Generator[List[float], None, None]:
+        """Returns lines as an iterator
+
+        Returns:
+            A generator function iterating over the matrix lines
+        """
+
         for i in range(self.get_lines_count()):
             yield self.value[i]
 
-    def get_columns(self):
-        """Returns columns as an iterator"""
+    def get_columns(self) -> Generator[List[float], None, None]:
+        """Returns columns as an iterator
+
+        Returns:
+            A generator function iterating over the matrix columns
+        """
+
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
 
-    def get_minors(self):
+    def get_minors(self) -> Generator[tuple[int, 'Matrix'], None, None]:
+        """Returns a generator of all (cofactor, minors) of the matrix using the first row
 
-        for i in range(self.get_columns_count()):
-            minor = self.get_minor_at(0, i)
-            if (2, 2) != minor[1].shape:
-                yield from map(lambda x: (x[0]*minor[0], x[1]), minor[1].get_minors())
-            else:
-                yield minor
+        Returns:
+            A generator functions of tuple(cofactor, minors)
+        """
+        cofactor = None
 
-    def get_minor_at(self, line_index, column_index):
+        if self.__SINGLE_MATRIX == self.shape or self.__TWO_TWO_MATRIX == self.shape:
+            yield self.get_minor_at(0, 0)
+
+        else:
+
+            for i in range(self.get_columns_count()):
+                minor = self.get_minor_at(0, i)
+                cofactor = minor[0]
+                minors = minor[1].get_minors()
+
+                yield from map(lambda x: (x[0] * cofactor, x[1]), minors)
+
+    def get_minor_at(self, line_index: int, column_index: int) -> tuple[float, 'Matrix']:
         """Returns the cofactor and minor matrix at the specified index
 
         Args:
@@ -125,8 +252,14 @@ class Matrix:
             column_index (int): column as a zero-based index
 
         Returns:
-            A tuple (int, Matrix) containing the cofactor and the sub-matrix associated to the received indexes
+            A tuple(int, Matrix) containing the cofactor and the sub-matrix associated to the received indexes
         """
+
+        if self.__SINGLE_MATRIX == self.shape:
+            return 1, Matrix(self[0, 0])
+
+        if self.__TWO_TWO_MATRIX == self.shape:
+            return 1, Matrix([[self[0, 0], self[0, 1]], [self[1, 0], self[1, 1]]])
 
         cofactor = (-1) ** (line_index + column_index) * self[line_index, column_index]
 
@@ -135,12 +268,12 @@ class Matrix:
 
         return cofactor, Matrix(sub_matrix)
 
-    def __multiply_by_number(self, number):
+    def __multiply_by_number(self, number: float) -> 'Matrix':
         """Apply scalar multiplication to the matrix"""
         new_values = [[value * number for value in line] for line in self.get_lines()]
         return Matrix(new_values)
 
-    def __multiply_by_matrix(self, other):
+    def __multiply_by_matrix(self, other: 'Matrix') -> 'Matrix':
 
         def compute_single_value(processed_line, processed_column):
             return sum(map(lambda x: mul(x[0], x[1]), zip(processed_line, processed_column)))
@@ -155,7 +288,7 @@ class Matrix:
 
         return Matrix(values)
 
-    def __addition_law(self, other, operation):
+    def __addition_law(self, other: 'Matrix', operation: callable) -> 'Matrix':
         if self.shape != other.shape:
             raise ValueError("Matrices to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
 
@@ -195,11 +328,3 @@ class Matrix:
 
                     if not is_line_valid(line):
                         raise ValueError("Lines line is not a list of numerical value, verify all values in {}".format(type(line)))
-
-
-test = Matrix([[1, 2, 3, 4, 5], [4, 5, 6, 4, 3], [0, 0, 0, 1, 5], [1, 3, 9, 8, 7], [5, 8, 4, 7, 11]])
-test2 = Matrix([[1, 7, 7], [6, 6, 4], [4, 2, 1]])
-mat = test.get_minors()
-det = test.determinant()
-print("\n\n".join(["Cofactor: {}\nMinor: \n{}\n".format(v[0], v[1]) for v in mat]))
-print(det)
