@@ -80,6 +80,14 @@ class Matrix:
 
         return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
 
+    def __str__(self) -> str:
+        """Returns a copiable and printable string representation of the matrix
+
+        Returns:
+            A copiable and printable string
+        """
+        return "Matrix([" + ", ".join("[" + ", ".join(str(x) for x in c) + "]" for c in self.value) + "])"
+
     def __eq__(self, other: 'Matrix') -> bool:
         """Returns true if both matrices are equal.
 
@@ -184,7 +192,7 @@ class Matrix:
 
         return sum(
             cofactor * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
-            for cofactor, squared_two_matrix in self.get_minors()
+            for cofactor, squared_two_matrix in self.get_reduced_minors()
         )
 
     def get_lines_count(self) -> int:
@@ -225,12 +233,17 @@ class Matrix:
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
 
-    def get_minors(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
-        """Returns a generator of all (cofactor, minors) of the matrix using the first row
+    def get_reduced_minors(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
+        """Returns a generator of all (cofactor, [2,2] minors) of the matrix using the first row
+
+        Notes:
+            All minors are decomposed until they are [2, 2] sized matrices.
+            This will yield to n!/2! tuples of (cofactor, [2, 2] matrix)
 
         Returns:
             A generator functions of tuple(cofactor, minors)
         """
+
         cofactor = None
 
         if self.__SINGLE_MATRIX == self.shape or self.__TWO_TWO_MATRIX == self.shape:
@@ -241,9 +254,19 @@ class Matrix:
             for i in range(self.get_columns_count()):
                 minor = self.get_minor_at(0, i)
                 cofactor = minor[0]
-                minors = minor[1].get_minors()
+                minors = minor[1].get_reduced_minors()
 
                 yield from map(lambda x: (x[0] * cofactor, x[1]), minors)
+
+    def get_minors(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
+        """Returns a generator of all (cofactor, [n-1, n-n] minors) of the matrix using the first row
+
+        Notes:
+            This is the first decomposition so a [n, n] matrix will yield to n tuples of (cofactor, [n-1, n-1] matrix).
+
+        Returns:
+            A generator functions of tuple(cofactor, minors)
+        """
 
     def get_minor_at(self, line_index: int, column_index: int) -> Tuple[float, 'Matrix']:
         """Returns the cofactor and minor matrix at the specified index
