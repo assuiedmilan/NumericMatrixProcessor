@@ -30,6 +30,36 @@ class Matrix:
         self.__validate()
 
     @property
+    def is_squared(self) -> bool:
+        """Returns true if matrix is squared
+
+        Returns:
+            A boolean
+        """
+
+        return self.shape[0] == self.shape[1]
+
+    @property
+    def is_scalar(self) -> bool:
+        """Returns true if matrix has size [1]
+
+        Returns:
+            A boolean
+        """
+
+        return self.__SINGLE_MATRIX == self.shape
+
+    @property
+    def is_two_by_two(self) -> bool:
+        """Returns true if matrix has size [2, 2]
+
+        Returns:
+            A boolean
+        """
+
+        return self.__TWO_TWO_MATRIX == self.shape
+
+    @property
     def value(self) -> List[list]:
         """Returns the matrix values
 
@@ -246,7 +276,7 @@ class Matrix:
 
         cofactor = None
 
-        if self.__SINGLE_MATRIX == self.shape or self.__TWO_TWO_MATRIX == self.shape:
+        if self.is_scalar or self.is_two_by_two:
             yield from self.get_minors()
 
         else:
@@ -267,7 +297,7 @@ class Matrix:
             A generator functions of tuple(cofactor, minors)
         """
 
-        if self.__SINGLE_MATRIX == self.shape or self.__TWO_TWO_MATRIX == self.shape:
+        if self.is_scalar or self.is_two_by_two:
             yield self.get_minor_at(0, 0)
         else:
             for i in range(self.get_columns_count()):
@@ -284,10 +314,13 @@ class Matrix:
             A tuple(int, Matrix) containing the cofactor and the sub-matrix associated to the received indexes
         """
 
-        if self.__SINGLE_MATRIX == self.shape:
+        if not self.is_squared:
+            AttributeError("Minors can only be computed from squared matrix, current matrix has size ({})".format(self.shape))
+
+        if self.is_scalar:
             return 1, Matrix(self[0, 0])
 
-        if self.__TWO_TWO_MATRIX == self.shape:
+        if self.is_two_by_two:
             return 1, Matrix([[self[0, 0], self[0, 1]], [self[1, 0], self[1, 1]]])
 
         cofactor = (-1) ** (line_index + column_index) * self[line_index, column_index]
