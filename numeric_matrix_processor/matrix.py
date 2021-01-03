@@ -315,7 +315,7 @@ class Matrix:
         """
 
         if not self.is_squared:
-            AttributeError("Minors can only be computed from squared matrix, current matrix has size ({})".format(self.shape))
+            raise AttributeError("Minors can only be computed from squared matrix, current matrix has size ({})".format(self.shape))
 
         if self.is_scalar:
             return 1, Matrix(self[0, 0])
@@ -362,6 +362,9 @@ class Matrix:
             return all(isinstance(x, (int, float)) for x in line_under_test)
 
         value = self.value
+
+        if not value:
+            raise ValueError("Argument is not a matrix of numerical value, but an empty list")
 
         if not isinstance(value, list):
             if not is_line_valid([value]):
