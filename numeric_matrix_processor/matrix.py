@@ -247,12 +247,11 @@ class Matrix:
         cofactor = None
 
         if self.__SINGLE_MATRIX == self.shape or self.__TWO_TWO_MATRIX == self.shape:
-            yield self.get_minor_at(0, 0)
+            yield from self.get_minors()
 
         else:
 
-            for i in range(self.get_columns_count()):
-                minor = self.get_minor_at(0, i)
+            for minor in self.get_minors():
                 cofactor = minor[0]
                 minors = minor[1].get_reduced_minors()
 
@@ -267,6 +266,12 @@ class Matrix:
         Returns:
             A generator functions of tuple(cofactor, minors)
         """
+
+        if self.__SINGLE_MATRIX == self.shape or self.__TWO_TWO_MATRIX == self.shape:
+            yield self.get_minor_at(0, 0)
+        else:
+            for i in range(self.get_columns_count()):
+                yield self.get_minor_at(0, i)
 
     def get_minor_at(self, line_index: int, column_index: int) -> Tuple[float, 'Matrix']:
         """Returns the cofactor and minor matrix at the specified index
