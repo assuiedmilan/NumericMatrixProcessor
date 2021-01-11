@@ -121,15 +121,7 @@ class Matrix:
             A printable string
         """
 
-        return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
-
-    def __str__(self) -> str:
-        """Returns a copiable and printable string representation of the matrix
-
-        Returns:
-            A copiable and printable string
-        """
-        return "Matrix([" + ", ".join("[" + ", ".join(str(x) for x in c) + "]" for c in self.value) + "])"
+        return "".join([" ".join([str(int(i)) if float.is_integer(i) else str(i) for i in line]) + "\n" for line in self.value])
 
     def __eq__(self, other: 'Matrix') -> bool:
         """Returns true if both matrices are equal.
@@ -235,7 +227,7 @@ class Matrix:
 
         return sum(
             value * sign * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
-            for value, squared_two_matrix, sign in self.get_cofactors_full_decomposition()
+            for value, squared_two_matrix, sign in self.__get_cofactors_full_decomposition()
         )
 
     def inverse(self) -> Optional['Matrix']:  # pylint: disable=unsubscriptable-object
@@ -295,44 +287,8 @@ class Matrix:
 
     def get_cofactors_matrix(self) -> 'Matrix':
         """Returns the cofactors matrix"""
-        cofactors = []
-
-        for line in range(self.get_lines_count()):
-            cofactors_line = []
-
-            for column in range(self.get_columns_count()):
-                _, minor, sign = self.get_cofactor_at(line, column)
-                cofactors_line.append(minor.determinant() * sign)
-
-            cofactors.append(cofactors_line)
-
+        cofactors = [list(map(lambda x: x[1] * x[2],  [self.get_cofactor_at(i, j) for j in range(self.get_columns_count())])) for i in range(self.get_lines_count())]
         return Matrix(cofactors)
-
-    def get_cofactors_full_decomposition(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
-        """Returns a generator of all (a(i, j) products, [2, 2] minors, minor sign (1 or -1)) of the matrix using the first row
-
-        Notes:
-            All minors are decomposed until they are [2, 2] sized matrices.
-            This will yield to n!/2! tuples of (cofactor, [2, 2] matrix)
-
-        Yields:
-            A generator functions of tuple(float, Matrix, int)
-        """
-
-        value = None
-        sign = None
-
-        if self.is_scalar or self.is_two_by_two:
-            yield from self.get_cofactors()
-
-        else:
-
-            for minor in self.get_cofactors():
-                value = minor[0]
-                minors = minor[1].get_cofactors_full_decomposition()
-                sign = minor[2]
-
-                yield from map(lambda x: (x[0] * value * sign, x[1], x[2]), minors)
 
     def get_cofactors(self) -> Generator[Tuple[int, 'Matrix', int], None, None]:
         """Returns a generator of all (a(i, j), [n-1, n-n] minors, minor sign (1 or -1)) of the matrix using the first row
@@ -402,6 +358,32 @@ class Matrix:
             raise ValueError("Matrices to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
 
         return Matrix(list(map(lambda x: list(map(operation, x[0], x[1])), zip(self.get_lines(), other.get_lines()))))
+
+    def __get_cofactors_full_decomposition(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
+        """Returns a generator of all (a(i, j) products, [2, 2] minors, minor sign (1 or -1)) of the matrix using the first row
+
+        Notes:
+            All minors are decomposed until they are [2, 2] sized matrices.
+            This will yield to n!/2! tuples of (cofactor, [2, 2] matrix)
+
+        Yields:
+            A generator functions of tuple(float, Matrix, int)
+        """
+
+        value = None
+        sign = None
+
+        if self.is_scalar or self.is_two_by_two:
+            yield from self.get_cofactors()
+
+        else:
+
+            for minor in self.get_cofactors():
+                value = minor[0]
+                minors = minor[1].__get_cofactors_full_decomposition()
+                sign = minor[2]
+
+                yield from map(lambda x: (x[0] * value * sign, x[1], x[2]), minors)
 
     def __validate(self):
 
