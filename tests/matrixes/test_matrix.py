@@ -90,7 +90,7 @@ def test_columns(value, columns):
     assert columns == list(matrix.get_columns())
 
 
-@pytest.mark.parametrize("value", ["1", ["1"], [[1, 2], [1]], [[1, 2], [1, "2"]], ])
+@pytest.mark.parametrize("value", [[], "1", ["1"], [[1, 2], [1]], [[1, 2], [1, "2"]], ])
 def test_invalid_entries(value):
     """Test invalid entries"""
     with pytest.raises(ValueError):

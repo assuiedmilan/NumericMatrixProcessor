@@ -3,6 +3,7 @@ from operator import mul
 from operator import sub
 from typing import Generator
 from typing import List
+from typing import Optional
 from typing import Tuple
 from typing import Union
 
@@ -30,6 +31,36 @@ class Matrix:
         self.__validate()
 
     @property
+    def is_squared(self) -> bool:
+        """Returns true if matrix is squared
+
+        Returns:
+            A boolean
+        """
+
+        return self.shape[0] == self.shape[1]
+
+    @property
+    def is_scalar(self) -> bool:
+        """Returns true if matrix has size [1]
+
+        Returns:
+            A boolean
+        """
+
+        return self.__SINGLE_MATRIX == self.shape
+
+    @property
+    def is_two_by_two(self) -> bool:
+        """Returns true if matrix has size [2, 2]
+
+        Returns:
+            A boolean
+        """
+
+        return self.__TWO_TWO_MATRIX == self.shape
+
+    @property
     def value(self) -> List[list]:
         """Returns the matrix values
 
@@ -38,6 +69,18 @@ class Matrix:
         """
 
         return self.__value
+
+    @property
+    def values(self) -> Generator[float, None, None]:
+        """Generator of all matrix values line by line
+
+        Yields:
+            The matrix values
+        """
+
+        for lines in range(self.get_lines_count()):
+            for columns in range(self.get_columns_count()):
+                yield self[lines, columns]
 
     @property
     def shape(self) -> Tuple[int, int]:
@@ -107,10 +150,10 @@ class Matrix:
         return self.__addition_law(other, add)
 
     def __sub__(self, other: 'Matrix') -> 'Matrix':
-        """Returns matrices substraction result
+        """Returns matrices subtraction result
 
         Args:
-            other (numeric_matrix_processor.matrix.Matrix): the matrix to substract
+            other (numeric_matrix_processor.matrix.Matrix): the matrix to subtract
 
         Returns:
             A numeric_matrix_processor.matrix.Matrix
@@ -183,9 +226,28 @@ class Matrix:
             return self[0, 0]
 
         return sum(
-            cofactor * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
-            for cofactor, squared_two_matrix in self.get_minors()
+            value * sign * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
+            for value, squared_two_matrix, sign in self.get_minors_full_decomposition()
         )
+
+    def inverse(self) -> Optional['Matrix']:  # pylint: disable=unsubscriptable-object
+        """Return the inverse matrix
+
+        Returns:
+            The inverse matrix if it exists
+
+        Raises:
+            ValueError if the inverse does not exist
+        """
+
+        determinant = self.determinant()
+
+        if determinant == 0:
+            raise ValueError("Determinant of this matrix is zero, it has no inverse.")
+
+        cofactors_matrix = self.get_cofactors_matrix().transpose()
+
+        return cofactors_matrix * (1/determinant)
 
     def get_lines_count(self) -> int:
         """Returns the number of lines
@@ -225,49 +287,89 @@ class Matrix:
         for i in range(self.get_columns_count()):
             yield [x[i] for x in self.value]
 
-    def get_minors(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
-        """Returns a generator of all (cofactor, minors) of the matrix using the first row
+    def get_cofactors_matrix(self) -> 'Matrix':
+        """Returns the cofactors matrix"""
+        cofactors = []
 
-        Returns:
-            A generator functions of tuple(cofactor, minors)
+        for line in range(self.get_lines_count()):
+            cofactors_line = []
+
+            for column in range(self.get_columns_count()):
+                _, minor, sign = self.get_minor_at(line, column)
+                cofactors_line.append(minor.determinant() * sign)
+
+            cofactors.append(cofactors_line)
+
+        return Matrix(cofactors)
+
+    def get_minors_full_decomposition(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
+        """Returns a generator of all (a(i, j) products, [2, 2] minors, minor sign (1 or -1)) of the matrix using the first row
+
+        Notes:
+            All minors are decomposed until they are [2, 2] sized matrices.
+            This will yield to n!/2! tuples of (cofactor, [2, 2] matrix)
+
+        Yields:
+            A generator functions of tuple(float, Matrix, int)
         """
-        cofactor = None
 
-        if self.__SINGLE_MATRIX == self.shape or self.__TWO_TWO_MATRIX == self.shape:
-            yield self.get_minor_at(0, 0)
+        value = None
+        sign = None
+
+        if self.is_scalar or self.is_two_by_two:
+            yield from self.get_minors()
 
         else:
 
+            for minor in self.get_minors():
+                value = minor[0]
+                minors = minor[1].get_minors_full_decomposition()
+                sign = minor[2]
+
+                yield from map(lambda x: (x[0] * value * sign, x[1], x[2]), minors)
+
+    def get_minors(self) -> Generator[Tuple[int, 'Matrix', int], None, None]:
+        """Returns a generator of all (a(i, j), [n-1, n-n] minors, minor sign (1 or -1)) of the matrix using the first row
+
+        Notes:
+            This is the first decomposition so a [n, n] matrix will yield to n tuples of (cofactor, [n-1, n-1] matrix).
+
+        Yields:
+            A generator functions of tuple(float, Matrix, int) the matrix value a(i, j), it's minor M(i, j) and the minor sign (1 or -1)
+        """
+
+        if self.is_scalar or self.is_two_by_two:
+            yield self.get_minor_at(0, 0)
+        else:
             for i in range(self.get_columns_count()):
-                minor = self.get_minor_at(0, i)
-                cofactor = minor[0]
-                minors = minor[1].get_minors()
+                yield self.get_minor_at(0, i)
 
-                yield from map(lambda x: (x[0] * cofactor, x[1]), minors)
-
-    def get_minor_at(self, line_index: int, column_index: int) -> Tuple[float, 'Matrix']:
-        """Returns the cofactor and minor matrix at the specified index
+    def get_minor_at(self, line_index: int, column_index: int) -> Tuple[float, 'Matrix', int]:
+        """Returns the matrix value a(i, j), it's minor M(i, j) and the minor sign (1 or -1)
 
         Args:
             line_index (int): line as a zero-based index
             column_index (int): column as a zero-based index
 
         Returns:
-            A tuple(int, Matrix) containing the cofactor and the sub-matrix associated to the received indexes
+            A tuple(float, Matrix, int) the matrix value a(i, j), it's minor M(i, j) and the minor sign (1 or -1)
         """
 
-        if self.__SINGLE_MATRIX == self.shape:
-            return 1, Matrix(self[0, 0])
+        if not self.is_squared:
+            raise AttributeError("Minors can only be computed from squared matrix, current matrix has size ({})".format(self.shape))
 
-        if self.__TWO_TWO_MATRIX == self.shape:
-            return 1, Matrix([[self[0, 0], self[0, 1]], [self[1, 0], self[1, 1]]])
+        if self.is_scalar:
+            return 1, Matrix(self[0, 0]), 1
 
-        cofactor = (-1) ** (line_index + column_index) * self[line_index, column_index]
+        if self.is_two_by_two:
+            return 1, Matrix([[self[0, 0], self[0, 1]], [self[1, 0], self[1, 1]]]), 1
+
+        sign = (-1) ** (line_index + column_index)
 
         sub_matrix = [line for i, line in enumerate(self.get_lines()) if i is not line_index]
         sub_matrix = [[column for j, column in enumerate(line) if j is not column_index] for line in sub_matrix]
 
-        return cofactor, Matrix(sub_matrix)
+        return self[line_index, column_index], Matrix(sub_matrix), sign
 
     def __multiply_by_number(self, number: float) -> 'Matrix':
         """Apply scalar multiplication to the matrix"""
@@ -301,6 +403,9 @@ class Matrix:
             return all(isinstance(x, (int, float)) for x in line_under_test)
 
         value = self.value
+
+        if not value:
+            raise ValueError("Argument is not a matrix of numerical value, but an empty list")
 
         if not isinstance(value, list):
             if not is_line_valid([value]):
