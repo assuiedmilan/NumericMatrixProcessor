@@ -31,4 +31,3 @@ def test_matrix_no_inverse(value):
 
     with pytest.raises(ValueError):
         initial_matrix.inverse()
-

@@ -31,7 +31,7 @@ def test_matrix_determinant_on_non_squared_matrix(value):
         initial_matrix.determinant()
 
     with pytest.raises(AttributeError):
-        list(initial_matrix.get_cofactors())
+        list(initial_matrix.get_minors())
 
     with pytest.raises(AttributeError):
-        initial_matrix.get_cofactor_at(0, 0)
+        initial_matrix.get_minor_at(0, 0)

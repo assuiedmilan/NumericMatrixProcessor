@@ -227,7 +227,7 @@ class Matrix:
 
         return sum(
             value * sign * (squared_two_matrix[0, 0] * squared_two_matrix[1, 1] - squared_two_matrix[1, 0] * squared_two_matrix[0, 1])
-            for value, squared_two_matrix, sign in self.__get_cofactors_full_decomposition()
+            for value, squared_two_matrix, sign in self.get_minors_full_decomposition()
         )
 
     def inverse(self) -> Optional['Matrix']:  # pylint: disable=unsubscriptable-object
@@ -295,14 +295,40 @@ class Matrix:
             cofactors_line = []
 
             for column in range(self.get_columns_count()):
-                _, minor, sign = self.get_cofactor_at(line, column)
+                _, minor, sign = self.get_minor_at(line, column)
                 cofactors_line.append(minor.determinant() * sign)
 
             cofactors.append(cofactors_line)
 
         return Matrix(cofactors)
 
-    def get_cofactors(self) -> Generator[Tuple[int, 'Matrix', int], None, None]:
+    def get_minors_full_decomposition(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
+        """Returns a generator of all (a(i, j) products, [2, 2] minors, minor sign (1 or -1)) of the matrix using the first row
+
+        Notes:
+            All minors are decomposed until they are [2, 2] sized matrices.
+            This will yield to n!/2! tuples of (cofactor, [2, 2] matrix)
+
+        Yields:
+            A generator functions of tuple(float, Matrix, int)
+        """
+
+        value = None
+        sign = None
+
+        if self.is_scalar or self.is_two_by_two:
+            yield from self.get_minors()
+
+        else:
+
+            for minor in self.get_minors():
+                value = minor[0]
+                minors = minor[1].get_minors_full_decomposition()
+                sign = minor[2]
+
+                yield from map(lambda x: (x[0] * value * sign, x[1], x[2]), minors)
+
+    def get_minors(self) -> Generator[Tuple[int, 'Matrix', int], None, None]:
         """Returns a generator of all (a(i, j), [n-1, n-n] minors, minor sign (1 or -1)) of the matrix using the first row
 
         Notes:
@@ -313,12 +339,12 @@ class Matrix:
         """
 
         if self.is_scalar or self.is_two_by_two:
-            yield self.get_cofactor_at(0, 0)
+            yield self.get_minor_at(0, 0)
         else:
             for i in range(self.get_columns_count()):
-                yield self.get_cofactor_at(0, i)
+                yield self.get_minor_at(0, i)
 
-    def get_cofactor_at(self, line_index: int, column_index: int) -> Tuple[float, 'Matrix', int]:
+    def get_minor_at(self, line_index: int, column_index: int) -> Tuple[float, 'Matrix', int]:
         """Returns the matrix value a(i, j), it's minor M(i, j) and the minor sign (1 or -1)
 
         Args:
@@ -370,32 +396,6 @@ class Matrix:
             raise ValueError("Matrices to add must have the same size.\n - Self matrix is {}\n - Other matrix is {}".format(self.shape, other.shape))
 
         return Matrix(list(map(lambda x: list(map(operation, x[0], x[1])), zip(self.get_lines(), other.get_lines()))))
-
-    def __get_cofactors_full_decomposition(self) -> Generator[Tuple[int, 'Matrix'], None, None]:
-        """Returns a generator of all (a(i, j) products, [2, 2] minors, minor sign (1 or -1)) of the matrix using the first row
-
-        Notes:
-            All minors are decomposed until they are [2, 2] sized matrices.
-            This will yield to n!/2! tuples of (cofactor, [2, 2] matrix)
-
-        Yields:
-            A generator functions of tuple(float, Matrix, int)
-        """
-
-        value = None
-        sign = None
-
-        if self.is_scalar or self.is_two_by_two:
-            yield from self.get_cofactors()
-
-        else:
-
-            for minor in self.get_cofactors():
-                value = minor[0]
-                minors = minor[1].__get_cofactors_full_decomposition()
-                sign = minor[2]
-
-                yield from map(lambda x: (x[0] * value * sign, x[1], x[2]), minors)
 
     def __validate(self):
 

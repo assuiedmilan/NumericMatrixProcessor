@@ -19,7 +19,7 @@ def test_addition(first, second, result):
 def test_invalid_addition(first, second):
     """Test matrix additions"""
     with pytest.raises(ValueError):
-        first + second
+        first + second  # pylint: disable=pointless-statement
 
 
 @pytest.mark.parametrize("first, second, result", [
@@ -38,7 +38,7 @@ def test_subtraction(first, second, result):
 def test_invalid_substraction(first, second):
     """Test matrix additions"""
     with pytest.raises(ValueError):
-        first - second
+        first - second  # pylint: disable=pointless-statement
 
 
 @pytest.mark.parametrize("first, second, result", [
@@ -63,4 +63,4 @@ def test_multiplication(first, second, result):
 def test_invalid_multiplication(first, second):
     """Test matrix multiplication"""
     with pytest.raises(ValueError):
-        first * second
+        first * second  # pylint: disable=pointless-statement
