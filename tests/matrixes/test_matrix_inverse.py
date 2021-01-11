@@ -1,5 +1,6 @@
-import pytest
 import sys
+
+import pytest
 
 from numeric_matrix_processor.matrix import Matrix
 from numeric_matrix_processor.matrix_generators import get_identity

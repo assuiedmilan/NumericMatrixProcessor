@@ -161,7 +161,7 @@ class Matrix:
         """Returns matrices subtraction result
 
         Args:
-            other (numeric_matrix_processor.matrix.Matrix): the matrix to substract
+            other (numeric_matrix_processor.matrix.Matrix): the matrix to subtract
 
         Returns:
             A numeric_matrix_processor.matrix.Matrix
@@ -238,7 +238,7 @@ class Matrix:
             for value, squared_two_matrix, sign in self.get_cofactors_full_decomposition()
         )
 
-    def inverse(self) -> Optional['Matrix']:
+    def inverse(self) -> Optional['Matrix']:  # pylint: disable=unsubscriptable-object
         """Return the inverse matrix
 
         Returns:
