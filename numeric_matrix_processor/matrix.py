@@ -121,7 +121,7 @@ class Matrix:
             A printable string
         """
 
-        return "".join([" ".join([str(int(i)) if float.is_integer(i) else str(i) for i in line]) + "\n" for line in self.value])
+        return "".join([" ".join([str(i) for i in line]) + "\n" for line in self.value])
 
     def __eq__(self, other: 'Matrix') -> bool:
         """Returns true if both matrices are equal.
@@ -235,13 +235,15 @@ class Matrix:
 
         Returns:
             The inverse matrix if it exists
+
+        Raises:
+            ValueError if the inverse does not exist
         """
 
         determinant = self.determinant()
 
         if determinant == 0:
-            print("This matrix doesn't have an inverse.")
-            return None
+            raise ValueError("Determinant of this matrix is zero, it has no inverse.")
 
         cofactors_matrix = self.get_cofactors_matrix().transpose()
 
@@ -287,7 +289,17 @@ class Matrix:
 
     def get_cofactors_matrix(self) -> 'Matrix':
         """Returns the cofactors matrix"""
-        cofactors = [list(map(lambda x: x[1] * x[2],  [self.get_cofactor_at(i, j) for j in range(self.get_columns_count())])) for i in range(self.get_lines_count())]
+        cofactors = []
+
+        for line in range(self.get_lines_count()):
+            cofactors_line = []
+
+            for column in range(self.get_columns_count()):
+                _, minor, sign = self.get_cofactor_at(line, column)
+                cofactors_line.append(minor.determinant() * sign)
+
+            cofactors.append(cofactors_line)
+
         return Matrix(cofactors)
 
     def get_cofactors(self) -> Generator[Tuple[int, 'Matrix', int], None, None]:

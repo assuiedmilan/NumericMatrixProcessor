@@ -28,6 +28,7 @@ def test_matrix_inverse(value):
 def test_matrix_no_inverse(value):
     """Test matrix with zeroed determinants"""
     initial_matrix = Matrix(value)
-    zero_matrix = initial_matrix.inverse()
 
-    assert not zero_matrix
+    with pytest.raises(ValueError):
+        initial_matrix.inverse()
+
